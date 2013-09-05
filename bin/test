@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export HEROKU_POSTGRESQL_CYAN_URL="postgresql://clog:clog@localhost:5432/clog"
+export HEROKU_POSTGRESQL_GOLD_URL="postgresql://clog:clog@localhost:5432/clog"
 export CLOG_DEBUG=TRUE
 
 

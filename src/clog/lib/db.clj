@@ -63,7 +63,7 @@
   "Connect to the DB based on the environment var passed to use either by
     Heroku, or via exporting it in the shell locally. "
   ([]
-     (connect-db-impl (System/getenv "HEROKU_POSTGRESQL_CYAN_URL")))
+     (connect-db-impl (System/getenv "HEROKU_POSTGRESQL_GOLD_URL")))
   ([url] (connect-db-impl url)))
 
 
