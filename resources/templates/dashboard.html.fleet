@@ -1,0 +1,56 @@
+<form method="POST" action="/save">
+  <input type="hidden" id="id" name="id" value=""/>
+  <div class="row-fluid">
+    <div class="span2">
+      <a href="/new" class="btn btn-primary">New Post</a>
+    </div>
+    <div class="span5">
+    </div>
+    <div class="span4">
+    </div>
+    <div class="span1">
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      &nbsp;
+    </div>
+  </div>
+  <div class="row-fluid articlefont">
+    <div class="span6">
+      <i><b>Title</b></i>
+    </div>
+    <div class="span4">
+      <i><b>Description</b></i>
+    </div>
+    <div class="span2">
+      <i><b>Created</b></i>
+    </div>
+  </div>
+
+  <(for [p (data :posts)] ">
+    <div class="row-fluid articlefont">
+      <div class="span6">
+        <a href="/edit/<(p :id)>"><(p :title)></a>
+      </div>
+      <div class="span4">
+        <(p :description)>
+      </div>
+      <div class="span2">
+        <(util/format-date-time (p :create_dt))>
+      </div>
+    </div>
+  <")>
+
+</form>
+
+
+
+
+
+
+
+
+
+
+

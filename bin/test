@@ -1,0 +1,14 @@
+#!/bin/bash
+
+export HEROKU_POSTGRESQL_CYAN_URL="postgresql://clog:clog@localhost:5432/clog"
+export CLOG_DEBUG=TRUE
+
+
+pg_dump -U clog -O -c clog > bin/.tmpdb.sql
+
+bin/reload > /dev/null 2>&1
+
+lein test | grep -iv pool | grep -v C3P0 2>&1
+
+psql -q -U clog -d clog -f bin/.tmpdb.sql > /dev/null 2>&1
+

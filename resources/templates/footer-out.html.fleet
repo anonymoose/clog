@@ -1,0 +1,27 @@
+        <div class="row-fluid">
+          <div class="span12">
+            <p id="index-copyright-bar-text-1">
+              &copy; Copyright 2013 Palm Valley Software
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div> <!-- /container -->
+
+<script src="/bootstrap/js/jquery.js"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<script src="/js/jquery-ui/ui/minified/jquery-ui.min.js"></script>
+<script src="/js/rangy-core-1.2.3.js"></script>
+<script src="/js/hallo.js"></script>
+<script src="/js/showdown/compressed/showdown.js"></script>
+<script src="/js/to-markdown.js"></script>
+<script src="/js/site.js"></script>
+
+<!-- http://softwaremaniacs.org/media/soft/highlight/test.html -->
+<script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
+
+  </body>
+</html>
+
+

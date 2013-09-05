@@ -1,0 +1,5 @@
+#!/bin/bash
+
+psql -U clog -d clog -f doc/schema.sql
+psql -U clog -d clog -f doc/.schema.sql
+
