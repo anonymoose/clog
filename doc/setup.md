@@ -50,5 +50,9 @@ heroku pg:psql HEROKU_POSTGRESQL_CYAN_URL
     ALTER TABLE
     db3fsmopgk3gqg=> \q
     
+heroku addons:add newrelic:standard
+# download it and add it in "newrelic" directory
+heroku config:add JVM_OPTS="-Xmx400m -javaagent:newrelic/newrelic.jar"
+
 
 git push -u heroku master     <-- Do this forever more.
