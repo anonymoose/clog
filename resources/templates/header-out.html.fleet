@@ -21,9 +21,9 @@
   </head>
 
   <body>
-    <div class="navbar navbar-inverse navbar-fixed-top ">
+    <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
-        <div class="container-fluid">
+        <div class="container">
           <a class="brand" href="/">Palm Valley Software</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
@@ -38,5 +38,3 @@
     
     <div class="container-fluid">
       
-
-
