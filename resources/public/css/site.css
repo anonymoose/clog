@@ -141,3 +141,10 @@ footer p {
     padding-left: 30px;
 }
 
+.ace_editor {
+    position: relative !important;
+    border: 1px solid lightgray;
+    height: 800px;
+    width: 100%;
+    border-radius: 12px;
+}

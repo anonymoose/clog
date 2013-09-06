@@ -21,6 +21,7 @@
   ([id params]
      (let [blog (blog/load-one id)
            usr (user/load-one (:users_id params))]
+       (error (str params))
        (blog/save id params)
        (ring/redirect (str "/edit/" id))))
   ([params]
@@ -40,6 +41,11 @@
   ([id]
      (page-edit 'views/edit {:blog (blog/load-one id)
                              :usr (user/load-one (session-get :user-id))})))
+
+
+(defn delete-blog [id]
+  (blog/del id)
+  (ring/redirect "/dashboard"))
 
 
 (defn publish-blog [id]

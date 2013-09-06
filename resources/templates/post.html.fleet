@@ -1,15 +1,15 @@
   <div class="row-fluid" style="min-height: 700px;">
-    <div class="span3">
+    <div class="span2">
       <p class="gorilla">
-        <img src="/images/gorilla1.jpg" border="0"/>
+        <img src="/images/gorilla1.jpg" style="height: 90px;"/>
       </p>
-      <p class="articlefont">
+      <p class="">
         Big Data.<br/>Clojure.<br/>Computational Finance.<br/>Jeep restoration.
       </p>
     </div>
-    <div class="span9">
+    <div class="span10">
       <article>
-        <(get (data :blog) :content "")>
+        <(markdown-to-html (get (data :blog) :content ""))>
       </article>
     </div>
   </div>

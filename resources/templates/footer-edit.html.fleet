@@ -12,15 +12,11 @@
 <script src="/bootstrap/js/jquery.js"></script>
 <script src="/bootstrap/js/bootstrap.min.js"></script>
 <script src="/js/jquery-ui/ui/minified/jquery-ui.min.js"></script>
-<script src="/js/rangy-core-1.2.3.js"></script>
-<script src="/js/hallo.js"></script>
 <script src="/js/showdown/compressed/showdown.js"></script>
-<script src="/js/to-markdown.js"></script>
+<script src="/js/ace-editor/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="/js/site.js"></script>
-
-
 <!-- http://softwaremaniacs.org/media/soft/highlight/test.html -->
-<script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
+<script src="/js/highlight/highlight.pack.js"></script>
 
   </body>
 </html>

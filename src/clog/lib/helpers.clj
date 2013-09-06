@@ -6,7 +6,8 @@
 
 (ns clog.lib.helpers
   (:use
-   [clog.lib.util :as util])
+   [clog.lib.util :as util]
+   [markdown.core])
   (:require
    [clojure.string :as str]))
 
@@ -25,7 +26,11 @@
 
 
 (defn format-title-for-link [title]
-  (str/replace (.toLowerCase title) " " "-")
-  )
+  (str/replace (.toLowerCase title) " " "-"))
+
+
+(defn markdown-to-html [markdown]
+  (md-to-html-string markdown
+                     :code-style #(str "class=\"" % "\"")))
 
 

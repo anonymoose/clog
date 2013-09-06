@@ -17,7 +17,7 @@
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
     </style>
-    <link rel="stylesheet" href="http://yandex.st/highlightjs/7.3/styles/default.min.css">
+    <link rel="stylesheet" href="/js/highlight/styles/default.css">
   </head>
 
   <body>
@@ -26,7 +26,7 @@
         <div class="container">
           <a class="brand" href="/">Palm Valley Software</a>
           <div class="nav-collapse collapse">
-            <ul class="nav">
+            <ul class="nav pull-right">
               <li class="active"><a href="/">Home</a></li>
               <li><a href="http://www.linkedin.com/in/kbedwell" target="_blank">LinkedIn</a></li>
               <li><a href="https://github.com/anonymoose" target="_blank">Github</a></li>

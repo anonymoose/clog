@@ -2,56 +2,39 @@
 
 /* KB: [2013-09-03]: Update workspace and markdown based on which side you are editing. */
 $(document).ready(function() {
-    // Enable Hallo editor
-    $('.editable').hallo({
-        plugins: {
-            'halloformat': {},
-            'halloheadings': {},
-            'hallolists': {},
-            'halloreundo': {}
-        },
-        toolbar: 'halloToolbarFixed'
-    });
-    
-    var markdownize = function(workspace) {
-        var html = workspace.split("\n").map($.trim).filter(function(line) { 
-            return line != "";
-        }).join("\n");
-        return toMarkdown(html);
+    // http://ace.c9.io/#nav=about
+    var editor = '';
+
+    var init = function() {
+        ace.edit("workspace");
+        editor.setTheme("ace/theme/idle_fingers");
+        editor.getSession().setMode("ace/mode/markdown");
+        editor.setHighlightActiveLine(false);
+        editor.setKeyboardHandler("ace/keyboard/emacs");
+        editor.renderer.setShowPrintMargin(false);
+
+        var markdown = $('#content').val();
+        editor.setValue(markdown);
+        updateHtml(markdown);
     };
-    
+
     var converter = new Showdown.converter();
     var htmlize = function(workspace) {
         return converter.makeHtml(workspace.trim());
     };
     
-    var showSource = function(workspace) {
-        var markdown = markdownize(workspace);
-        if ($('#workspace').get(0).value == markdown) {
-            return;
-        }
-        $('#workspace').get(0).value = markdown;
+    var updateHtml = function(workspace_contents) {
+        $('#content').val(workspace_contents);
+        var html = htmlize(workspace_contents);
+        $('#output').html(html);
     };
-    
-    var updateHtml = function(workspace) {
-        if (markdownize($('.editable').html()) == workspace) {
-            return;
-        }
-        var html = htmlize(workspace);
-        $('.editable').html(html); 
-        $('#content').html(html); 
-    };
-    
-    $('.editable').bind('hallomodified', function(event, data) {
-        showSource(data.workspace);
-    });
+
     $('#workspace').bind('keyup', function() {
-        updateHtml(this.value);
+        updateHtml(editor.getValue());
     });
-    if ($(".editable").length > 0) {
-        showSource($('.editable').html());
+    if ($("#output").length > 0) {
+        init();
     }
-    //updateHtml($('#workspace').val());
 
     $('#view_select').bind('change', function() {
         $('.toggle-view').toggle();

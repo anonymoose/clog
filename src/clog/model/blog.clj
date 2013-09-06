@@ -64,3 +64,9 @@
   (update blog
           (set-fields {:publish_dt nil})
           (where {:id id})))
+
+(defn del [id]
+  (update blog
+          (set-fields {:delete_dt (util/ts-now)})
+          (where {:id id})))
+

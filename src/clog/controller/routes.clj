@@ -39,6 +39,9 @@
        (logged-in? #(clog.controller.site/publish-blog id)))
   (GET "/unpublish/:id" [id]
        (logged-in? #(clog.controller.site/unpublish-blog id)))
+  (GET "/delete/:id" [id]
+       (logged-in? #(clog.controller.site/delete-blog id)))
+
 
   (GET "/dashboard" [] (logged-in? #(clog.controller.userc/dashboard)))
   (GET "/new" [] (logged-in? #(clog.controller.site/edit)))
