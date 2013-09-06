@@ -114,6 +114,7 @@
 (defn rename-key [kvmap old new]
   (assoc (dissoc kvmap old) new (kvmap old)))
 
+
 (defn md5
   "Generate a md5 checksum for the given string"
   [token]

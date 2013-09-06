@@ -35,6 +35,11 @@
                        (clog.controller.site/save-blog (params "id") (util/keyword-keyify params))
                        )))
 
+  (GET "/publish/:id" [id]
+       (logged-in? #(clog.controller.site/publish-blog id)))
+  (GET "/unpublish/:id" [id]
+       (logged-in? #(clog.controller.site/unpublish-blog id)))
+
   (GET "/dashboard" [] (logged-in? #(clog.controller.userc/dashboard)))
   (GET "/new" [] (logged-in? #(clog.controller.site/edit)))
   (GET "/post/:id" [id] (clog.controller.site/post id))

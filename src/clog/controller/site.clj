@@ -42,6 +42,16 @@
                              :usr (user/load-one (session-get :user-id))})))
 
 
+(defn publish-blog [id]
+  (blog/publish id)
+  (ring/redirect (str "/edit/" id)))
+
+
+(defn unpublish-blog [id]
+  (blog/unpublish id)
+  (ring/redirect (str "/edit/" id)))
+
+
 (defn about []
   (page-out 'views/about {}))
 

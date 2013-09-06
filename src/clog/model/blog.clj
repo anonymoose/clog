@@ -18,6 +18,7 @@
 (defn latest-n [n]
   (select blog (where
                 {:delete_dt nil
+                 :publish_dt [not= nil]
                  })
           (order :create_dt)
           (limit n)))
@@ -46,3 +47,13 @@
                                       :content (str/trim (:content params))}))))))
 
 
+(defn publish [id]
+  (update blog
+          (set-fields {:publish_dt (util/ts-now)})
+          (where {:id id})))
+
+
+(defn unpublish [id]
+  (update blog
+          (set-fields {:publish_dt nil})
+          (where {:id id})))

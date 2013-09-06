@@ -42,6 +42,7 @@ create table blog (
        keywords varchar(200) not null,
        content text not null,
        users_id varchar(25) not null,
+       publish_dt timestamp without timezone,
        create_dt timestamp without time zone default now(),
        delete_dt timestamp without time zone
 );

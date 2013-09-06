@@ -12,20 +12,30 @@
   <input type="hidden" id="users_id" name="users_id" value="<(get (data :usr) :id "")>"/>
   <div class="row-fluid">
     <div class="span2">
-      Title:
+      <label>Title:</label>
       <input type="text" name="title" id="title" class="input-large" value="<(get (data :blog) :title "")>"/>
     </div>
     <div class="span3">
-      Description:
+      <label>Description:</label>
       <input type="text" name="description" id="description" class="input-xlarge" value="<(get (data :blog) :description "")>"/>
     </div>
     <div class="span3">
-      Keywords:
+      <label>Keywords:</label>
       <input type="text" name="keywords" id="keywords" class="input-xlarge" value="<(get (data :blog) :keywords "")>"/>
     </div>
     <div class="span3">
       <button type="submit" class="btn btn-primary">Save</button>
+      <(if (= nil (get (data :blog) :publish_dt)) 
+           ">
+            <a href="/publish/<(get (data :blog) :id)>" class="btn btn-danger">Publish</a>
+            <"
+           ">
+            <a href="/unpublish/<(get (data :blog) :id)>" class="btn btn-inverse">UnPublish</a>
+            <"
+           )>
+
       <a href="/dashboard" class="btn btn-secondary">List</a>
+
       <select id="view_select"> 
         <option value="preview">Preview</option>
         <option value="guide">Markdown Guide</option>
