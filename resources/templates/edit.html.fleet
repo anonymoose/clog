@@ -6,7 +6,6 @@
   }
 </style>
 
-
 <form method="POST" action="/save">
   <input type="hidden" id="id" name="id" value="<(get (data :blog) :id "")>"/>
   <input type="hidden" id="users_id" name="users_id" value="<(get (data :usr) :id "")>"/>
@@ -25,14 +24,16 @@
     </div>
     <div class="span3">
       <button type="submit" class="btn btn-primary">Save</button>
-      <(if (= nil (get (data :blog) :publish_dt)) 
+      <(if-not (= (data :blog) {})
+         (if (= nil (get (data :blog) :publish_dt)) 
            ">
-            <a href="/publish/<(get (data :blog) :id)>" class="btn btn-danger">Publish</a>
+            <a href="/publish/<(get (data :blog) :id "")>" class="btn btn-danger">Publish</a>
             <"
-              ">
-              <a href="/unpublish/<(get (data :blog) :id)>" class="btn btn-inverse">UnPublish</a>
-              <"
-                )>
+            ">
+              <a href="/unpublish/<(get (data :blog) :id "")>" class="btn btn-inverse">UnPublish</a>
+            <"
+            )
+          "")>
         
       <a href="/dashboard" class="btn btn-secondary">List</a>
         
