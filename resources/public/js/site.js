@@ -48,7 +48,9 @@ $(document).ready(function() {
     $('#workspace').bind('keyup', function() {
         updateHtml(this.value);
     });
-    showSource($('.editable').html());
+    if ($(".editable").length > 0) {
+        showSource($('.editable').html());
+    }
     //updateHtml($('#workspace').val());
 
     $('#view_select').bind('change', function() {

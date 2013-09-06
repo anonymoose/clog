@@ -1,9 +1,17 @@
-  <div class="row-fluid articlefont">
-    <div class="span6">
+  <div class="row-fluid articlefont" style="min-height: 700px;">
+    <div class="span3">
+      <p class="gorilla">
+        <img src="/images/gorilla1.jpg" border="0"/>
+      </p>
+      <p>
+        Big Data.<br/>Clojure.<br/>Computational Finance.<br/>Jeep restoration.
+      </p>
     </div>
-    <div class="span6">
+    <div class="span9">
       <(for [p (data :posts)] ">
+                               <p>
                                <a href="/post/<(p :id)>/<(format-title-for-link (p :title))>"><(p :title)></a>
+                               </p>
                                <")>
 
     </div>
