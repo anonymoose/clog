@@ -54,5 +54,7 @@ heroku addons:add newrelic:standard
 # download it and add it in "newrelic" directory
 heroku config:add JVM_OPTS="-Xmx400m -javaagent:newrelic/newrelic.jar"
 
+# prevent heroku app from idling
+http://stackoverflow.com/questions/5480337/easy-way-to-prevent-heroku-idling
 
 git push -u heroku master     <-- Do this forever more.
