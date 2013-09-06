@@ -42,8 +42,9 @@
                              :usr (user/load-one (session-get :user-id))})))
 
 
-
 (defn about []
   (page-out 'views/about {}))
+
+
 (defn contact []
   (page-out 'views/contact {}))
