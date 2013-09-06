@@ -44,6 +44,10 @@ article .download a {
     margin-right: 1em;
 }
 
+article img {
+    width: 200px;
+}
+
 a {
     color: #000000;
     text-decoration: none;
@@ -136,3 +140,4 @@ footer p {
 .gorilla {
     padding-left: 30px;
 }
+
