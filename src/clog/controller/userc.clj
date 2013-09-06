@@ -30,10 +30,10 @@
      (ring/redirect "/")))
 
 
-
 (defn dashboard
   []
   (let [posts (blog/latest-n 10)]
+    (error (str "posts " posts))
     (page-out 'views/dashboard {:posts posts})))
 
 

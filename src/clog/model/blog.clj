@@ -15,12 +15,19 @@
 (defentity blog)
 
 
-(defn latest-n [n]
+(defn latest-n-published [n]
   (select blog (where
                 {:delete_dt nil
                  :publish_dt [not= nil]
                  })
-          (order :create_dt)
+          (order :publish_dt :DESC)
+          (limit n)))
+
+
+(defn latest-n [n]
+  (select blog (where
+                {:delete_dt nil})
+          (order :publish_dt :DESC)
           (limit n)))
 
 

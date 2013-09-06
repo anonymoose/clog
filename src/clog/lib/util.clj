@@ -24,11 +24,14 @@
 
 (defn format-date [dt]
   (if-not (nil? dt)
-    (.format (new java.text.SimpleDateFormat "yyyy-MM-dd") dt)))
+    (.format (new java.text.SimpleDateFormat "yyyy-MM-dd") dt)
+    ""))
+
 
 (defn format-date-time [dt]
   (if-not (nil? dt)
-    (.format (new java.text.SimpleDateFormat "yyyy-MM-dd HH:mm") dt)))
+    (.format (new java.text.SimpleDateFormat "yyyy-MM-dd HH:mm") dt)
+    ""))
 
 
 (defn current-date-str []

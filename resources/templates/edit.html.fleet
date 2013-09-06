@@ -29,17 +29,19 @@
            ">
             <a href="/publish/<(get (data :blog) :id)>" class="btn btn-danger">Publish</a>
             <"
-           ">
-            <a href="/unpublish/<(get (data :blog) :id)>" class="btn btn-inverse">UnPublish</a>
-            <"
-           )>
-
+              ">
+              <a href="/unpublish/<(get (data :blog) :id)>" class="btn btn-inverse">UnPublish</a>
+              <"
+                )>
+        
       <a href="/dashboard" class="btn btn-secondary">List</a>
-
-      <select id="view_select"> 
-        <option value="preview">Preview</option>
-        <option value="guide">Markdown Guide</option>
-      </select>
+        
+      <p>
+        <select id="view_select"> 
+          <option value="preview">Preview</option>
+          <option value="guide">Markdown Guide</option>
+        </select>
+      </p>
     </div>
   </div>
   <div class="row-fluid">

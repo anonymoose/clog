@@ -12,7 +12,7 @@
 
 
 (defn index []
-  (let [posts (blog/latest-n 10)]
+  (let [posts (blog/latest-n-published 10)]
     (page-out 'views/index {:posts posts})))
 
 
