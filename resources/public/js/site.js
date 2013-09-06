@@ -6,7 +6,7 @@ $(document).ready(function() {
     var editor = '';
 
     var init = function() {
-        ace.edit("workspace");
+        editor = ace.edit("workspace");
         editor.setTheme("ace/theme/idle_fingers");
         editor.getSession().setMode("ace/mode/markdown");
         editor.setHighlightActiveLine(false);
