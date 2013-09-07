@@ -144,7 +144,7 @@ footer p {
 .ace_editor {
     position: relative !important;
     border: 1px solid lightgray;
-    height: 1200px;
+    height: 2000px;
     width: 100%;
     border-radius: 12px;
 }
