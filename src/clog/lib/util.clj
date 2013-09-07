@@ -118,15 +118,27 @@
   (assoc (dissoc kvmap old) new (kvmap old)))
 
 
-(defn md5
-  "Generate a md5 checksum for the given string"
-  [token]
-  (let [hash-bytes
-         (doto (java.security.MessageDigest/getInstance "MD5")
-               (.reset)
-               (.update (.getBytes token)))]
-       (.toString
-         (new java.math.BigInteger 1 (.digest hash-bytes)) ; Positive and the size of the number
-         16))) ; Use base16 i.e. hex
+(defn hash-string
+  "Use java interop to flexibly hash strings"
+  [string algo base]
+  (let [hashed
+        (doto (java.security.MessageDigest/getInstance algo)
+          (.reset)
+          (.update (.getBytes string)))]
+    (.toString (new java.math.BigInteger 1 (.digest hashed)) base))
+  )
 
+
+(defn hash-md5
+  "Generate a md5 checksum for the given string"
+  [string]
+  (hash-string string "MD5" 16)
+) 
+
+
+(defn hash-sha
+  "Generate a sha checksum for the given string"
+  [string]
+  (hash-string string "SHA-1" 16)
+) 
 

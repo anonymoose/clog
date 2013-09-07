@@ -7,7 +7,11 @@
 (ns clog.lib.helpers
   (:use
    [clog.lib.util :as util]
-   [markdown.core])
+   [markdown.core]
+   ;; [endophile.core :only [mp to-clj]]
+   ;; [endophile.hiccup :only [to-hiccup]]
+   ;; [hiccup.core :only [html]]
+   )
   (:require
    [clojure.string :as str]))
 
@@ -32,5 +36,11 @@
 (defn markdown-to-html [markdown]
   (md-to-html-string markdown
                      :code-style #(str "class=\"" % "\"")))
+
+;; (defn markdown-to-html [markdown]
+;;   (let [parsed (mp markdown)]
+;;     (html (to-hiccup parsed))))
+
+
 
 

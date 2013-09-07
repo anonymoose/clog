@@ -10,6 +10,7 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [ring "1.2.0"]
                  [markdown-clj "0.9.31"]
+                                        ;[endophile "0.1.0"]
                  [org.clojure/tools.namespace "0.2.4"] ; https://github.com/clojure/tools.namespace
                  [postgresql "9.1-901.jdbc4"]
                  [ring.middleware.logger "0.4.0"]  ; https://github.com/pjlegato/ring.middleware.logger

@@ -34,7 +34,7 @@
 
 (defn authenticate [usr password]
   (and (not (nil? usr))
-       (= (util/md5 password) (usr :password))))
+       (= (util/hash-md5 password) (usr :password))))
 
 
 (defn save
