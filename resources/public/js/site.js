@@ -29,8 +29,14 @@ $(document).ready(function() {
         $('#output').html(html);
     };
 
+    var updateWorkspace = function() {
+        $('.ace_editor').css('height', $('#output').css('height'));
+        editor.resize();
+    };
+
     $('#workspace').bind('keyup', function() {
         updateHtml(editor.getValue());
+        updateWorkspace();
     });
     if ($("#output").length > 0) {
         init();
