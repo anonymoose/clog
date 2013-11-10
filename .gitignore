@@ -3,8 +3,11 @@
 /classes
 /checkouts
 /logs
+.nrepl-port
 pom.xml
 pom.xml.asc
+\#*
+.\#*
 *.class
 .lein-deps-sum
 .lein-failures
