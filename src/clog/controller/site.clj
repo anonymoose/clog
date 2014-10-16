@@ -64,3 +64,7 @@
 
 (defn contact []
   (page-out 'views/contact {}))
+
+
+(defn adam []
+  (page-out 'views/adam {}))

@@ -30,7 +30,7 @@
             <"
             "")>
       <(if-not (= (data :blog) {})
-         (if (= nil (get (data :blog) :publish_dt)) 
+         (if (= nil (get (data :blog) :publish_dt))
            ">
             <a href="/publish/<(get (data :blog) :id "")>" class="btn btn-success">Publish</a>
             <"
@@ -39,11 +39,11 @@
             <"
             )
           "")>
-        
+
       <a href="/dashboard" class="btn btn-secondary">List</a>
-        
+
       <p>
-        <select id="view_select"> 
+        <select id="view_select">
           <option value="preview">Preview</option>
           <option value="guide">Markdown Guide</option>
         </select>
@@ -421,4 +421,3 @@ Like code blocks, code spans will be displayed in a monospaced typeface.  Markdo
     </div>
   </div>
 </form>
-

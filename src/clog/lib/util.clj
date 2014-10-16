@@ -74,7 +74,7 @@
 (defn dateify-params
   "if a key ends in _dt and its value is a string, convert that to a sql date."
   [params]
-  (zipmap (keys params) 
+  (zipmap (keys params)
           (for [kv (seq params)]
             (let [k (name (key kv))
                   v (val kv)]
@@ -89,7 +89,7 @@
 (defn undateify-params
   "if a value's type is a date-ish type, convert the date to a date string"
   [params]
-  (zipmap (keys params) 
+  (zipmap (keys params)
           (for [kv (seq params)]
             (let [k (name (key kv))
                   v (val kv)]
@@ -133,12 +133,11 @@
   "Generate a md5 checksum for the given string"
   [string]
   (hash-string string "MD5" 16)
-) 
+)
 
 
 (defn hash-sha
   "Generate a sha checksum for the given string"
   [string]
   (hash-string string "SHA-1" 16)
-) 
-
+)

@@ -70,5 +70,3 @@
     (if (util/debug-mode?)
       (compile-templates))
     (handler request)))
-
-
