@@ -56,7 +56,7 @@ function adam_check() {
         || "mucha aqua" == pw
         || "mucha" == pw
        ) {
-           window.location = "/post/emm77p9f1h2ear9ptbsffxsja/hidden";
+           window.location = "/post/5wk3xa2mqz6hulaj1v3me6ix4/mucha";
        } else {
            alert("Dude.  I'm offended.  You're better than this.  It's 'mucha agua'.");
        }
