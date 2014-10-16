@@ -1,12 +1,17 @@
-
 (ns clog.model.user
   (:use
    [korma.db]
-   [korma.core])
+   [korma.core]
+   )
   (:require
+   [clojure.tools.logging :as log]
+   [clog.lib.db :as db]
    [clog.lib.util :as util]
+   [clojure.string :as str]
+   [clj-json.core :as json]
+   [clojure.tools.logging :only [info error]]
+   [digest]
    ))
-
 
 ;;
 ;; User entity
@@ -16,11 +21,11 @@
 
 
 (defn find-by-email [email]
-  (first 
+  (first
    (select user
            (where {:email email
                    :delete_dt nil}))))
-    
+
 
 (defn load-one [id]
   (first (select user
@@ -41,11 +46,9 @@
   ([id params]
      (update user
              (set-fields (merge {:id id} params))
-             (where {:id id}))) 
+             (where {:id id})))
 
   ([params]
      (let [id (util/uuid)]
        (insert user
                (values (merge params {:id id}))))))
-
-

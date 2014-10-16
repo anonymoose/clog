@@ -7,38 +7,33 @@
 </style>
 
 <form method="POST" action="/save">
-  <input type="hidden" id="id" name="id" value="<(get (data :blog) :id "")>"/>
-  <input type="hidden" id="users_id" name="users_id" value="<(get (data :usr) :id "")>"/>
+  <input type="hidden" id="id" name="id" value="{{blog.id}}"/>
+  <input type="hidden" id="users_id" name="users_id" value="{{usr.id}}"/>
   <div class="row-fluid">
     <div class="span2">
       <label>Title:</label>
-      <input type="text" name="title" id="title" class="input-large" value="<(get (data :blog) :title "")>"/>
+      <input type="text" name="title" id="title" class="input-large" value="{{blog.title}}"/>
     </div>
     <div class="span3">
       <label>Description:</label>
-      <input type="text" name="description" id="description" class="input-xlarge" value="<(get (data :blog) :description "")>"/>
+      <input type="text" name="description" id="description" class="input-xlarge" value="{{blog.description}}"/>
     </div>
     <div class="span3">
       <label>Keywords:</label>
-      <input type="text" name="keywords" id="keywords" class="input-xlarge" value="<(get (data :blog) :keywords "")>"/>
+      <input type="text" name="keywords" id="keywords" class="input-xlarge" value="{{blog.keywords}}"/>
     </div>
     <div class="span3">
       <button type="submit" class="btn btn-primary">Save</button>
-      <(if-not (= (data :blog) {})
-           ">
-            <a href="/delete/<(get (data :blog) :id "")>" class="btn btn-danger">Delete</a>
-            <"
-            "")>
-      <(if-not (= (data :blog) {})
-         (if (= nil (get (data :blog) :publish_dt))
-           ">
-            <a href="/publish/<(get (data :blog) :id "")>" class="btn btn-success">Publish</a>
-            <"
-            ">
-              <a href="/unpublish/<(get (data :blog) :id "")>" class="btn btn-inverse">UnPublish</a>
-            <"
-            )
-          "")>
+
+      {% if blog %}
+         <a href="/delete/{{blog.id}}" class="btn btn-danger">Delete</a>
+      {% endif %}
+
+      {% if not blog.publish_dt %}
+         <a href="/publish/{{blog.id}}" class="btn btn-success">Publish</a>
+      {% else %}
+         <a href="/unpublish/{{blog.id}}" class="btn btn-inverse">UnPublish</a>
+      {% endif %}
 
       <a href="/dashboard" class="btn btn-secondary">List</a>
 
@@ -53,7 +48,7 @@
   <div class="row-fluid">
     <div class="span6">
       <div id="workspace"></div>
-      <textarea id="content" name="content" style="display:none;"><(get (data :blog) :content "")></textarea>
+      <textarea id="content" name="content" style="display:none;">{{blog.content}}</textarea>
     </div>
     <div class="span6">
       <article class="toggle-view">

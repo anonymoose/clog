@@ -31,32 +31,22 @@
     </div>
   </div>
 
-  <(for [p (data :posts)] ">
+  {% for post in posts %}
     <div class="row-fluid articlefont">
       <div class="span4">
-        <a href="/edit/<(p :id)>"><(p :title)></a>
+        <a href="/edit/{{post.id}}">{{post.title}}</a>
       </div>
       <div class="span4">
-        <(p :description)>
+        {{post.description}}
       </div>
       <div class="span2">
-        <(util/format-date-time (p :create_dt))>
+        {{post.create_dt|date:shortDate}}
       </div>
       <div class="span2">
-        <(util/format-date-time (p :publish_dt))>
+        {{post.publish_dt|date:shortDate}}
       </div>
     </div>
-  <")>
+  {% endfor %}
+
 
 </form>
-
-
-
-
-
-
-
-
-
-
-

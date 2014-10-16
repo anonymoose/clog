@@ -1,13 +1,17 @@
-
 (ns clog.model.blog
   (:use
    [korma.db]
-   [korma.core])
+   [korma.core]
+   )
   (:require
+   [clojure.tools.logging :as log]
+   [clog.lib.db :as db]
    [clog.lib.util :as util]
    [clojure.string :as str]
+   [clj-json.core :as json]
+   [clojure.tools.logging :only [info error]]
+   [digest]
    ))
-
 
 ;;
 ;; Blog entity
@@ -70,4 +74,3 @@
   (update blog
           (set-fields {:delete_dt (util/ts-now)})
           (where {:id id})))
-

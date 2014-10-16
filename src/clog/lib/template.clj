@@ -1,72 +1,114 @@
 ;;
-;; Define this namespace as the context for the Fleet template execution environment.
-;;
-(ns views
-  (:use
-   [clog.lib.util :as util]
-   [clog.lib.helpers]))
-
-;;
-;; Fleet Template Rendering
+;; Template Rendering (https://github.com/yogthos/Selmer)
 ;;
 (ns clog.lib.template
-  (:use
-   [fleet])
   (:require
+   [clojure.tools.logging :as log]
+   [selmer.parser :as parser]
+   [selmer.filters :as filter]
+   [clojure.string :as str]
    [clog.lib.util :as util]
+
    [clojure.java.io]))
 
-;; http://www.michaelnygard.com/blog/2011/01/glue_fleet_and_compojure_toget.html
-;; (extend-protocol Renderable
-;;   fleet.util.CljString
-;;   (render [this _] (response (.toString this))))
 
 (defn- common-vars [vars]
-  (merge vars
-         {:today util/current-date-str}))
+  (merge vars {:today (util/current-year)
+               :today-words (util/words-date-today)
+               }))
 
 
-(defn- render [header page footer vars]
-  "Render everything with header, footer and common variables.
-   this is for 'outside' pages (hence the -out suffix)
+(def TEMPLATE-ROOT "resources/templates/")
+(def TEMPLATE-EXT ".html")
 
-   In this example views/footer is a symbol passed in and eval'ed here.  Magic.
-   Fleet tutorial:  https://github.com/Flamefork/fleet"
-  (let [v (common-vars vars)]
-    (str ((eval header) v)
-         ((if (= (type page) java.lang.String)
-            (eval (read-string page))
-            (eval page)) v)
-         ((eval footer) v))))
+
+(defn- tpl-contents [f]
+  (slurp (java.io.File. (str TEMPLATE-ROOT f TEMPLATE-EXT)))
+  ;(str TEMPLATE-ROOT f TEMPLATE-EXT)
+  )
+
+(defn- format-ghost-string [id val klass deflt]
+  (str
+   "<input type=\"text\" id=\"" id "\" name=\"" id "\" class=\"" (if (str/blank? val) "ghost") " " klass "\" value=" (if (str/blank? val) deflt (str "\"" val "\"")) ">"
+   )
+  )
+
+
+(defn init-templates
+  "Run this at app initialization to get our selmer custom tags in there."
+  []
+  ; let selmer know where things are.  should be called once in
+  ;(selmer.parser/set-resource-path! (str (get (System/getenv) "PWD") "/" TEMPLATE-ROOT))
+
+  ; render some ghosted output, suitable for working with jquery's ghost
+  (parser/add-tag! :ghost
+                   (fn [args context-map]
+                     (let [id (nth args 0)
+                           obj (context-map (keyword (nth args 1)))
+                           deflt (nth args 2)
+                           klass (nth args 3 "input-small-kl")
+                           val (obj (keyword id))]
+                       (format-ghost-string id val klass deflt))))
+  (parser/add-tag! :ghost-val
+                   (fn [args context-map]
+                     (let [id (nth args 0)
+                           val (context-map (keyword (nth args 1)))
+                           deflt (nth args 2)
+                           klass (nth args 3 "input-small-kl")]
+                       (format-ghost-string id val klass deflt))))
+
+  (filter/add-filter! :empty? empty?)
+  (filter/add-filter! :nil? nil?)
+  (filter/add-filter! :truncate (fn [s l]
+                                  (let [maxlen (Integer/parseInt l)
+                                        strlen (count s)]
+                                    (if (> strlen maxlen)
+                                     (subs s 0 maxlen)
+                                     s
+                                     ))))
+  (filter/add-filter! :round (fn [s]
+                               (if (not (nil? s))
+                                 (format "%.2f" (.doubleValue (new Double s)))
+                                 "")))
+
+  (filter/add-filter! :fixup (fn [s]
+                               (->
+                                s
+                                (str/replace #"&#39;" "'")
+                                )
+                               ))
+
+  (filter/add-filter! :replace (fn [s replace-this with-this]
+                                  (str/replace s (re-pattern replace-this) with-this)))
+  )
+
+(defn add-template-tag [key fn]
+  (parser/add-tag! key fn)  )
+
+
+(defn render-tpl
+  ([tpl vars]
+     "Render the specified template to a string and return it."
+     (parser/render (tpl-contents tpl) (common-vars vars)))
+  ([header page footer vars]
+     "Render everything with header, footer and common variables.
+      this is for 'outside' pages (hence the -out suffix)"
+     (let [v (common-vars vars)]
+       (str (parser/render (tpl-contents header) v)
+            (parser/render (tpl-contents page) v)
+            (parser/render (tpl-contents footer) v)
+            ))))
+
 
 (defn page-out
-  "(page-out 'views/footer {:abc 123})"
   [page vars]
-  (render 'views/header-out page 'views/footer-out vars))
+  (render-tpl "header-out" page "footer-out" vars))
 
 
-(defn page-edit
-  "(page-edit 'views/footer {:abc 123})"
+(defn page-app
   [page vars]
-  (render 'views/header-edit page 'views/footer-edit vars))
+  (render-tpl "header-edit" page "footer-edit" vars))
 
 
-(defn page-render
-  [header page footer vars]
-  (render header page footer vars))
-
-
-(defn compile-templates []
-  (fleet-ns views "resources/templates"))
-
-
-(defn wrap-recompile-templates
-  [handler]
-  "Middleware that forces recompile of fleet templates in the default location.  This allows
-    the system to pick up all of the changes without doing anything explicit.
-    Only works when the 'CLOG_DEBUG' variable is set to 'TRUE'.  This is handled in bin/serve
-    "
-  (fn [request]
-    (if (util/debug-mode?)
-      (compile-templates))
-    (handler request)))
+(defn render-str [tpl args]
+  )

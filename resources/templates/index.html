@@ -8,16 +8,14 @@
       </p>
     </div>
     <div class="span9">
-      <(for [p (data :posts)] ">
-                               <p>
-                               <a href="/post/<(p :id)>/<(format-title-for-link (p :title))>"><(p :title)></a>
-                               </p>
-                               <")>
+
+{% for post in posts %}
+
+<p>
+  <a href="/post/{{post.id}}/{{post.title|urlescape}}">{{post.title}}</a>
+</p>
+
+{% endfor %}
 
     </div>
   </div>
-
-
-
-
-

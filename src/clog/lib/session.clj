@@ -1,12 +1,9 @@
 (ns clog.lib.session
-  (:use
-   [korma.db]
-   [korma.core]
-   [clojure.tools.logging :only (info error)]
-   [ring.middleware.session.store]
-   )
   (:require
-   [clog.lib.util :as util]))
+   [ring.middleware.session.store :as session]
+   [clog.lib.util :as util])
+  (:use
+   [korma.core]))
 
 
 (defentity ring_session)
@@ -23,7 +20,7 @@
 ;;
 (deftype DBStore []
 
-  SessionStore
+  session/SessionStore
 
   (read-session [_ session-key]
     (let [sess (first (select ring_session
@@ -47,8 +44,8 @@
                   (set-fields vals)
                   (where {:id session-key}))
           session-key
-          )))) 
-  
+          ))))
+
   (delete-session [_ session-key]
     (delete ring_session (where {:id session-key}))
     nil))

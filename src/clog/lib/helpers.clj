@@ -33,14 +33,7 @@
   (str/replace (.toLowerCase title) " " "-"))
 
 
-(defn markdown-to-html [markdown]
-  (md-to-html-string markdown
-                     :code-style #(str "class=\"" % "\"")))
 
 ;; (defn markdown-to-html [markdown]
 ;;   (let [parsed (mp markdown)]
 ;;     (html (to-hiccup parsed))))
-
-
-
-

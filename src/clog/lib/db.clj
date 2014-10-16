@@ -3,20 +3,21 @@
 ;; http://clojure.github.io/java.jdbc/doc/clojure/java/jdbc/ConnectionPooling.html
 ;;
 (ns clog.lib.db
-  (:use
-   [clojure.tools.logging :only (info error)]
-   [ring.middleware.session.store]
-   [clog.lib.util :as util])
-  (:require [clojure.java.jdbc :as sql]
-            [korma.db :as db]
-            [robert.hooke :refer [add-hook]]
-            [clj-time.core :as time]
-            [clojure.string :as string])
+  (:require
+   [clojure.tools.logging :as log]
+   [ring.middleware.session.store :as session]
+   [clog.lib.util :as util]
+   [clojure.java.jdbc :as sql]
+   [korma.db :as db]
+   [robert.hooke :refer [add-hook]]
+   [clj-time.core :as time]
+   [clojure.string :as str])
+  (:import [org.postgresql.util PGobject])
   (:import (java.net URI)))
 
 
 (defn sql-log [sql millis]
-  (info (str sql) "| timing:" millis "ms"))
+  (log/info (str sql) "| timing:" millis "ms"))
 
 
 (defn korma-sql-hook
@@ -42,8 +43,8 @@
     (let
         [db-uri-str url
          db-uri (java.net.URI. db-uri-str)]
-      (->> (string/split (.getUserInfo db-uri) #":")
-           (#(identity {:db (last (string/split db-uri-str #"\/"))
+      (->> (str/split (.getUserInfo db-uri) #":")
+           (#(identity {:db (last (str/split db-uri-str #"\/"))
                         :host (.getHost db-uri)
                         :port (.getPort db-uri)
                         :user (% 0)
@@ -59,11 +60,19 @@
     ))
 
 
+(defn purify
+  "purify the parameter to prevent sql injection"
+  [s]
+  s)
+
+
 (defn connect-db
   "Connect to the DB based on the environment var passed to use either by
     Heroku, or via exporting it in the shell locally. "
   ([]
-     (connect-db-impl (System/getenv "HEROKU_POSTGRESQL_GOLD_URL")))
+     (let [env (System/getenv "POSTGRESQL_URL")
+           env (if (nil? env) (System/getenv "HEROKU_POSTGRESQL_BROWN_URL") env)]
+      (connect-db-impl env)))
   ([url] (connect-db-impl url)))
 
 
@@ -76,3 +85,25 @@
      (handler request))))
 
 
+;; https://github.com/blakesmith/pghstore-clj/blob/master/src/pghstore_clj/core.clj
+
+(defn to-hstore
+  [hash-val]
+  (doto (PGobject.)
+    (.setType "hstore")
+    (.setValue
+     (apply str
+            (interpose ", "
+                       (for [[k v] hash-val]
+                         (format "\"%s\"=>\"%s\"" (name k) v)))))))
+
+(defn from-hstore
+  "Given an org.postgresql.util.PGobject"
+  [hstore-val]
+  (if (= "hstore" (.getType hstore-val))
+    (into {}
+          (for [[k v]
+                (map (fn [v]
+                       (map #(str/replace % #"\"" "") (str/split v #"=>")))
+                     (str/split (.getValue hstore-val) #", "))]
+            [(keyword k) v]))))

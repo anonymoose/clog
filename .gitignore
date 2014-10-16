@@ -18,3 +18,4 @@ pom.xml.asc
 .tmpdb.sql
 .schema.sql
 scratch.sql
+bin/.password

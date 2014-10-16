@@ -1,48 +1,166 @@
 (ns clog.lib.util
-  (:use
-   [clojure.tools.logging :only (info error)])
   (:require
-   [clojure.string :as str])
+   [clojure.tools.logging :as log]
+   [clj-time.predicates :as dtp]
+   [clojure.string :as str]
+   [clj-time.core :as dt]
+   [clj-time.format :as dt-fmt]
+   [clj-time.periodic :as dt-per]
+   [clj-time.predicates :as dt-pred]
+   [clj-time.coerce :as dt-c]
+   [clojure.java.io :as io]
+   )
+  (:use
+   [clojure.pprint]
+   [markdown.core])
+  (:refer-clojure :exclude [extend second])
   (:import
-   (java.security MessageDigest)
-   (java.sql Timestamp)))
-
+   (java.io StringWriter)
+   (java.sql Timestamp)
+   (java.net URL)
+   (java.lang StringBuilder)
+   (java.io BufferedReader InputStreamReader)
+   ))
 
 (defn current-date []
   (new java.util.Date))
 
+(defn parse-sql-date
+  ([dt]
+     (parse-sql-date dt "yyyy-MM-dd"))
+  ([dt fmt]
+     (if-not (str/blank? dt)
+       (new java.sql.Date (.getTime (.parse (new java.text.SimpleDateFormat fmt) dt))))))
 
-(defn parse-sql-date [dt]
-  (if-not (str/blank? dt)
-    (new java.sql.Date (.getTime (.parse (new java.text.SimpleDateFormat "yyyy-MM-dd") dt)))))
+(defn parse-date
+  ([dt]
+     (parse-date dt "yyyy-MM-dd"))
+  ([dt fmt]
+     (if-not (str/blank? dt)
+       (.parse (new java.text.SimpleDateFormat fmt) dt))))
 
+(defn words-date-days-ago
+  ([days-ago]
+     (let [cal (java.util.Calendar/getInstance)]
+       (.setTime cal (new java.util.Date))
+       (.add cal java.util.Calendar/DAY_OF_YEAR days-ago)
+       (.format (new java.text.SimpleDateFormat "MMMMM dd, yyyy") (.getTime cal))
+       )))
 
-(defn parse-date [dt]
-  (if-not (str/blank? dt)
-    (.parse (new java.text.SimpleDateFormat "yyyy-MM-dd") dt)))
+(defn dt-now []
+  (dt/now))
 
+(defn dt-now-local [tz]
+  (dt/to-time-zone (dt/now) (dt/time-zone-for-id tz)))
 
-(defn format-date [dt]
-  (if-not (nil? dt)
-    (.format (new java.text.SimpleDateFormat "yyyy-MM-dd") dt)
-    ""))
+(defn dt-yesterday []
+  (dt/plus (dt/now) (dt/days -1)))
 
+(defn dt-add-years [d ys]
+  (dt/plus d (dt/years ys)))
 
-(defn format-date-time [dt]
-  (if-not (nil? dt)
-    (.format (new java.text.SimpleDateFormat "yyyy-MM-dd HH:mm") dt)
-    ""))
+(defn dt-add-months [d ms]
+  (dt/plus d (dt/months ms)))
 
+(defn dt-add-days [d ds]
+  (dt/plus d (dt/days ds)))
+
+(defn dt-parse
+  ([dt]
+     (dt-parse dt "yyyy-MM-dd"))
+  ([dt fmt]
+     (dt-fmt/parse (dt-fmt/formatter fmt) dt))
+  ([dt fmt tz]
+     (dt-fmt/parse (dt-fmt/formatter fmt (dt/time-zone-for-id tz)) dt))
+  )
+
+(defn dt-weekend?
+  [dt]
+  (or (dt-pred/saturday? dt)
+      (dt-pred/sunday? dt)))
+
+(defn dt-before? [d1 d2]
+  (dt/before? d1 d2))
+
+(defn dt-after? [d1 d2]
+  (dt/after? d1 d2))
+
+(defn dt-format-to-str
+  ([d fmt tz]
+     (dt-fmt/unparse (dt-fmt/formatter fmt (dt/time-zone-for-id tz)) d))
+  ([d fmt]
+     (dt-fmt/unparse (dt-fmt/formatter fmt) d)))
+
+(defn dt-days-seq [st]
+  (dt-per/periodic-seq st (dt/days 1)))
+
+(defn dt-date-list-from-past [days-back]
+  (take days-back (dt-per/periodic-seq (dt/minus (dt/now) (dt/days days-back)) (dt/days 1))))
+
+(defn dt-date-list-from-year [yr]
+  (filter #(= yr (dt/year %)) (take 366 (dt-per/periodic-seq (dt/date-time yr 1 1) (dt/days 1)))))
+
+(defn dt-date-list-from-month [yr mo]
+  (filter #(and (= yr (dt/year %))
+                (= mo (dt/month %)))
+          (take 32 (dt-per/periodic-seq (dt/date-time yr mo 1) (dt/days 1)))))
+
+(defn ^Timestamp dt-to-sql-timestamp [d]
+  (Timestamp. (- (dt/year d) 1900) (- (dt/month d) 1) (dt/day d) (dt/hour d) (dt/minute d) 0 0))
+
+;; (defn dt-weekend [d]
+;;   (dtp/weekend? d))
+
+(defn dt-today-as-int []
+  (Integer/parseInt (dt-format-to-str (dt-now) "yyyyMMdd")))
+
+(defn words-date-today []
+  (words-date-days-ago 0))
+
+(defn format-date
+  ([dt]
+     (format-date dt "yyyy-MM-dd"))
+  ([dt fmt]
+     (if-not (nil? dt)
+       (.format (new java.text.SimpleDateFormat fmt) dt))))
+
+(defn within-n-days?
+  ([d1 d2 n fmt]
+     (let [fmter (dt-fmt/formatter fmt)
+           d1 (dt-fmt/parse fmter d1)
+           d2 (dt-fmt/parse fmter d2)]
+       (dt/within? (dt/interval d1 (dt/plus d1 (dt/days n))) d2)))
+  ([d1 d2 n]
+     (within-n-days? d1 d2 n "yyyy-MM-dd")))
+
+(defn dt-within? [dt1 dtbetween dt2]
+  (dt/within? (dt/interval dt1 dt2) dtbetween))
+
+(defn dt-from-java-date [jdt]
+  (dt-c/from-date jdt))
+
+(defn dt-to-timezone [d tz]
+  (dt/to-time-zone d (dt/time-zone-for-id tz)))
+
+(defn dt-from-timezone [d tz]
+  (dt/from-time-zone d (dt/time-zone-for-id tz)))
+
+(defn dt-to-utc [d]
+  (dt-to-timezone d "Greenwich"))
 
 (defn current-date-str []
   (format-date (current-date)))
 
+(defn current-year []
+  (+ 1900 (.getYear (current-date))))
+
+(defn sql-today []
+  (new java.sql.Date (.getTime (parse-date (current-date-str)))))
 
 (defn uuid []
   "Generate a base 36 string from a UUID
   90a58d7a-d274-4dc4-a80e-37daa76b7fb8 --> 2odnrp7yitnl05rg975gmyeas"
   (.toString (new BigInteger (.replace (str (java.util.UUID/randomUUID)) "-" "") 16) 36))
-
 
 (defn ^Timestamp ts-now
   ([]
@@ -50,6 +168,22 @@
   ([delta]
     (Timestamp. (+ (System/currentTimeMillis) delta))))
 
+(def TIMEZONE-LIST
+  [
+   "US/Eastern"
+   "US/Central"
+   "US/Mountain"
+   "US/Pacific"
+   "US/Alaska"
+   "US/Aleutian"
+   "US/Arizona"
+   "US/East-Indiana"
+   "US/Hawaii"
+   "US/Indiana-Starke"
+   "US/Michigan"
+   "US/Samoa"
+   ]
+  )
 
 (defn keyword-keyify
   "Turns
@@ -60,6 +194,8 @@
   [hash]
   (zipmap (map keyword (keys hash)) (vals hash)))
 
+(defn round [places num]
+  (read-string (format (str "%." places "f") num)))
 
 (defn string-keyify
   "Turns
@@ -101,7 +237,7 @@
 
 
 (defn debug-mode? []
-  (= (get (System/getenv) "CLOG_DEBUG" "") "TRUE"))
+  (= (get (System/getenv) "PICKR_DEBUG" "") "TRUE"))
 
 
 (defn unix-timestamp-to-sql-timestamp [val]
@@ -116,6 +252,80 @@
 
 (defn rename-key [kvmap old new]
   (assoc (dissoc kvmap old) new (kvmap old)))
+
+
+(defn only-prefixed-with
+  "(only-prefixed-with 'x_' {:x_a 'xa' :x_b 'xb' :a 'a' :b 'b' :c 'c'})
+   -> {:x_b 'xb', :x_a 'xa'}
+  "
+  [prefix params]
+  (into {} (remove nil? (map #(if (.startsWith (name (first %)) prefix) %) params))))
+
+
+(defn not-prefixed-with
+  "(not-prefixed-with 'x_' {:x_a 'xa' :x_b 'xb' :a 'a' :b 'b' :c 'c'})
+   -> {:b 'b', :a 'a', :c 'c'}
+  "
+  [prefix params]
+  (into {} (remove nil? (map #(if-not (.startsWith (name (first %)) prefix) %) params))))
+
+
+(defn un-prefix
+  "given a bunch of keys, some with prefixes, strip off the prefixes from the keys"
+  [prefix params]
+  (zipmap (map #(str/replace-first (name %) prefix "") (keys params)) (vals params))
+  )
+
+(def not-nil? (complement nil?))
+
+(defn save-lists
+  "
+      (let [list-fields (select-keys params (keys (util/only-prefixed-with 'list_' params)))]
+       (util/save-list list-fields post/save-list-item))
+  "
+  [list-fields fk-id func]
+  (doseq [list-key (keys list-fields)]
+                                        ; pull out the "[]" and "list_" from the list post parameter.
+    (let [list-type (str/replace (str/replace list-key "[]" "") "list_" "")]
+      (doseq [value (list-fields list-key)]
+        (if (not (empty? value))
+          (func fk-id list-type value))))))
+
+(defn parse-float [f]
+  (Float/parseFloat f))
+
+(defn string-convert [v converter]
+  (cond (and (= (type v) java.lang.String)
+             (not-nil? v)
+             (not (empty? v)))
+        (converter v)
+        (empty? v) nil
+        :else v))
+
+
+(defmacro time-only
+  "Evaluates expr and returns the time it took"
+  [expr]
+  `(let [start# (. System (nanoTime))
+         ret# ~expr]
+     (/ (double (- (. System (nanoTime)) start#)) 1000000.0)))
+
+
+(defmacro time-and-return
+  "Evaluates expr and returns the time it took"
+  [expr]
+  `(let [start# (. System (nanoTime))
+         ret# ~expr]
+     [(/ (double (- (. System (nanoTime)) start#)) 1000000.0)
+      ret#]))
+
+(defn between-inclusive [n st end]
+  (and (>= n st) (<= n end)))
+
+(defn pprint-to-str [obj]
+  (let [w (StringWriter.)]
+    (pprint obj w)
+    (.toString w)))
 
 
 (defn hash-string
@@ -141,3 +351,17 @@
   [string]
   (hash-string string "SHA-1" 16)
 )
+
+(defn lines-from-file [fname]
+  (with-open [r (io/reader fname)]
+    (doall (line-seq r))))
+
+
+(defn copy-file [src dest]
+  (io/copy (io/file src) (io/file dest)))
+
+
+
+(defn markdown-to-html [markdown]
+  (md-to-html-string markdown
+                     :code-style #(str "class=\"" % "\"")))

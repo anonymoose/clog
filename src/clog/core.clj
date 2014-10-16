@@ -6,11 +6,13 @@
         [ring.middleware.session        :only [wrap-session]]
         [ring.middleware.reload         :only [wrap-reload]]
         [ring.middleware.logger         :only [wrap-with-logger]]
+        [ring.middleware.json           :only [wrap-json-body]]
         [clojure.tools.logging          :only [info error]]
-        [clog.controller.routes      :only [app-routes]]
-        [clog.lib.db                 :only [connect-db wrap-transaction]]
-        [clog.lib.session            :only [db-session-store]]
-        [clog.lib.template           :only [wrap-recompile-templates compile-templates]]
+        [clog.controller.routes        :only [app-routes]]
+        [clog.lib.web                  :only [wrap-mobile-detection wrap-production-detection]]
+        [clog.lib.db                   :only [connect-db wrap-transaction]]
+        [clog.lib.template             :only [init-templates]]
+        [clog.lib.session              :only [db-session-store]]
         [sandbar.stateful-session]
         )
   (:require
@@ -22,24 +24,27 @@
 
 (defn app []
   (-> app-routes
+      (wrap-production-detection)
+      (wrap-mobile-detection)
       (wrap-with-logger)
-      (wrap-recompile-templates)
       (wrap-cookies)
-      (wrap-stateful-session {:cookie-name "clogsession" :store (db-session-store) })
+      (wrap-stateful-session {:cookie-name "pcookie" :store (db-session-store) })
       (wrap-keyword-params)
       (wrap-params)
-      (wrap-transaction)))
+      (wrap-json-body)
+      ))
 
 
 (def ring-handler
   (handler/site
    (do (connect-db)
-       (compile-templates)
+       (init-templates)
        (app))))
 
 
 (defn svr-start []
   (connect-db)
+  (init-templates)
   (let [port (Integer/parseInt (get (System/getenv) "PORT" "5000"))]
     (jetty/run-jetty (app) {:port port :join? false})))
 
@@ -47,9 +52,6 @@
 (defn -main [] (svr-start))
 
 
-
-
-
-
-
-
+(defn repl-start []
+  (connect-db "postgresql://clog:clog@localhost:5432/clog")
+  )
