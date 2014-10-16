@@ -18,6 +18,7 @@
                  [ring "1.2.0"]
                  [postgresql "9.1-901.jdbc4"]
                  [ring.middleware.logger "0.4.0"]  ; https://github.com/pjlegato/ring.middleware.logger
+                 [markdown-clj "0.9.31"]
                  [korma "0.3.0-RC5"]
                  [compojure "1.1.5"]
                  [c3p0/c3p0 "0.9.1.2"]
