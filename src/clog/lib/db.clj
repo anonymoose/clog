@@ -71,7 +71,7 @@
     Heroku, or via exporting it in the shell locally. "
   ([]
      (let [env (System/getenv "POSTGRESQL_URL")
-           env (if (nil? env) (System/getenv "HEROKU_POSTGRESQL_BROWN_URL") env)]
+           env (if (nil? env) (System/getenv "DATABASE_URL") env)]
       (connect-db-impl env)))
   ([url] (connect-db-impl url)))
 
