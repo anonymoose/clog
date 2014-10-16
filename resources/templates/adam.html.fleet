@@ -1,0 +1,17 @@
+<div class="row-fluid articlefont" style="min-height: 100px">
+  <div class="span3">
+  </div>
+  <div class="span6">
+    Once upon a time in Mexico, I took a dump and flooded our room.  What did our room attendant say?
+  </div>
+</div>
+<div class="row-fluid articlefont" style="min-height: 700px;">
+  <div class="span3">
+  </div>
+  <div class="span3">
+    <input type="text" name="pw" id="pw" class="input-xlarge"/>
+  </div>
+  <div class="offset1 span2">
+    <a href="javascript:adam_check();" class="btn btn-primary">Enter</a>
+  </div>
+</div>
